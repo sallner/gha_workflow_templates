@@ -1,3 +1,7 @@
+# XXX: This needs a .ssh folder in the root directory:
+#    sudo ln -s /run/github-runner/kravagtest50/.ssh /
+#    sudo chown github-runner:github-runner /.ssh
+
 name: Deploy
 
 on:
