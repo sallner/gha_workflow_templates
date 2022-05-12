@@ -23,7 +23,7 @@ jobs:
     env:
       TARGET: ''
     steps:
-    - uses: webfactory/ssh-agent@v0.5.4
+    - uses: risclog-solution/ssh-agent@master
       with:
         ssh-private-key: ${{ secrets.CLONE_KEY }}
     - name: Checkout github.com:risclog-solution/${{ inputs.repository }}.git
