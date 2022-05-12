@@ -37,6 +37,7 @@ jobs:
       run: |
           git config --global user.email "info@risclog.de"
           git config --global user.name "risclog"
+          git config core.sshCommand "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null"
           git clone --verbose git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
       run: |
