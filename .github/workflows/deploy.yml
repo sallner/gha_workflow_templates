@@ -24,7 +24,7 @@ jobs:
     runs-on: self-hosted
     env:
       TARGET: ''
-      HOME: '/run/github-runner'
+      HOME: '/run/github-runner/kravagtest50'
     steps:
     - name: Clean up
       run: |
