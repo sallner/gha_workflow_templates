@@ -23,9 +23,13 @@ jobs:
     env:
       TARGET: ''
     steps:
-    - uses: risclog-solution/ssh-agent@master
-      with:
-        ssh-private-key: ${{ secrets.CLONE_KEY }}
+    - name: Setup SSH access
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan fcio.net >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_CONFIG }}" > ~/.ssh/config
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
+        echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
     - name: Checkout github.com:risclog-solution/${{ inputs.repository }}.git
       run: git clone git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
@@ -37,12 +41,6 @@ jobs:
         source="master" && [[ ${{ inputs.target }} == "production" ]]  && source="staging"
         git merge origin/$source
         git push
-    - name: Setup SSH access
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan fcio.net >> ~/.ssh/known_hosts
-        echo "${{ secrets.SSH_CONFIG }}" > ~/.ssh/config
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
     - name: Deploy to ${{ inputs.target }}
       run: |
         ./batou deploy ${{ inputs.target }}
