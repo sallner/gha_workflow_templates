@@ -48,6 +48,11 @@ jobs:
         source="master" && [[ ${{ inputs.target }} == "production" ]]  && source="staging"
         git merge origin/$source
         git push
+    - name: Setup GPG
+      run: |
+        echo "${{ secrets.GPG_KEY }}" > ~/.private.key
+        gpg --import ~/.private.key
+        rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
         ./batou deploy ${{ inputs.target }}
