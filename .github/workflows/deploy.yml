@@ -23,6 +23,7 @@ jobs:
     env:
       TARGET: ''
     steps:
+    - uses: AutoModality/action-clean@v1
     - name: Setup SSH access
       run: |
         mkdir -p ~/.ssh
