@@ -61,7 +61,7 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
+        echo "$SHELL"
         alias ssh="ssh -i ~/.ssh/identity -o StrictHostKeyChecking=no"
-        which ssh
         ssh kravagtest00.fcio.net
         ./batou deploy ${{ inputs.target }}
