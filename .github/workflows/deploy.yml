@@ -28,6 +28,7 @@ jobs:
     - name: Clean up
       run: |
           rm -rf $GITHUB_WORKSPACE
+          mkdir -p $GITHUB_WORKSPACE
     - name: Setup SSH access
       run: |
         mkdir -p ~/.ssh
