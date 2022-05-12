@@ -27,15 +27,10 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan fcio.net >> ~/.ssh/known_hosts
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
+        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_CONFIG }}" > ~/.ssh/config
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
         echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
-    - name: Run tmate
-      uses: risclog-solution/action-tmate@master
-      with:
-        sudo: false
-        install-dependencies: false
     - name: Checkout github.com:risclog-solution/${{ inputs.repository }}.git
       run: git clone git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
