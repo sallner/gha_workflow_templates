@@ -62,4 +62,5 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
+        alias ssh="ssh -F ~/.ssh/config"
         ./batou deploy ${{ inputs.target }}
