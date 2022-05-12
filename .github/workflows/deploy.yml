@@ -25,6 +25,7 @@ jobs:
     steps:
     - name: Clean up
       run: |
+        cd $GITHUB_WORKSPACE
         rm -rf .
     - name: Setup SSH access
       run: |
