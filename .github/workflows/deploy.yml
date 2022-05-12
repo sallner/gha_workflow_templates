@@ -23,6 +23,9 @@ jobs:
     env:
       TARGET: ''
     steps:
+    - name: Clean up
+      run: |
+          rm -rf $GITHUB_WORKSPACE/*
     - name: Setup SSH access
       run: |
         mkdir -p ~/.ssh
@@ -37,7 +40,6 @@ jobs:
           git config --global user.email "info@risclog.de"
           git config --global user.name "risclog"
           git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null"
-          rm -rf $GITHUB_WORKSPACE
           git clone --verbose git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
       run: |
