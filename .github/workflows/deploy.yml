@@ -32,7 +32,7 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
         echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
     - name: Run tmate
-      uses: mxschmitt/action-tmate@v3.11
+      uses: mxschmitt/action-tmate@master
     - name: Checkout github.com:risclog-solution/${{ inputs.repository }}.git
       run: git clone git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
