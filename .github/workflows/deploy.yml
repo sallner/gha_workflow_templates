@@ -46,7 +46,6 @@ jobs:
         git config --global user.email "info@risclog.de"
         git config --global user.name "risclog"
         # git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null"
-        alias ssh="ssh -F ~/.ssh/config"
         git clone --verbose git@github.com:risclog-solution/${{ inputs.repository }}.git .
     - name: Update branch ${{ inputs.target }}
       run: |
@@ -62,5 +61,4 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
-        alias ssh="ssh -F ~/.ssh/config"
         ./batou deploy ${{ inputs.target }}
