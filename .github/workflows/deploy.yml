@@ -30,6 +30,7 @@ jobs:
       run: |
           rm -rf $GITHUB_WORKSPACE
           mkdir -p $GITHUB_WORKSPACE
+          cat /etc/ssh/ssh_config
     - name: Setup SSH access
       run: |
         mkdir -p ~/.ssh
