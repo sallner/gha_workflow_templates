@@ -62,4 +62,6 @@ jobs:
     - name: Deploy to ${{ inputs.target }}
       run: |
         alias ssh="ssh -i ~/.ssh/identity -o StrictHostKeyChecking=no"
+        which ssh
+        ssh kravagtest00.fcio.net
         ./batou deploy ${{ inputs.target }}
