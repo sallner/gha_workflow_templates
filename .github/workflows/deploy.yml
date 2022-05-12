@@ -32,7 +32,7 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
         echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
     - name: Run tmate
-      uses: mxschmitt/action-tmate@master
+      uses: risclog-solution/action-tmate@master
       with:
         sudo: false
         install-dependencies: false
