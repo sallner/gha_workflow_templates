@@ -61,7 +61,6 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
-        shopt -s expand_aliases
-        alias ssh="ssh -i ~/.ssh/identity -o StrictHostKeyChecking=no"
+        ssh() { command ssh -F ~/.ssh/config "$@"; }
         ssh kravagtest00.fcio.net
         ./batou deploy ${{ inputs.target }}
