@@ -62,5 +62,4 @@ jobs:
     - name: Deploy to ${{ inputs.target }}
       run: |
         ssh() { command ssh -F ~/.ssh/config "$@"; }
-        ssh kravagtest00.fcio.net
         ./batou deploy ${{ inputs.target }}
