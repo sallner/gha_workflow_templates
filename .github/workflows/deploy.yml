@@ -28,8 +28,8 @@ jobs:
       run: |
         mkdir -p ~/.ssh
         rm -rf ~/.ssh/known_hosts
-        ssh-keyscan fcio.net >> ~/.ssh/known_hosts
-        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+        #ssh-keyscan fcio.net >> ~/.ssh/known_hosts
+        #ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_CONFIG }}" > ~/.ssh/config
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/identity
         echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
