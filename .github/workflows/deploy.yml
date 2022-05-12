@@ -45,7 +45,7 @@ jobs:
         cd $GITHUB_WORKSPACE
         git config --global user.email "info@risclog.de"
         git config --global user.name "risclog"
-        # git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null"
+        git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -F /dev/null"
         git clone --verbose git@github.com:risclog-solution/${{ inputs.repository }}.git .
     - name: Update branch ${{ inputs.target }}
       run: |
@@ -61,4 +61,5 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
+        alias ssh="ssh -i ~/.ssh/identity -o StrictHostKeyChecking=no"
         ./batou deploy ${{ inputs.target }}
