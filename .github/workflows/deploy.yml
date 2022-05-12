@@ -26,7 +26,6 @@ jobs:
     - uses: AutoModality/action-clean@v1
     - name: Setup SSH access
       run: |
-        echo $XDG_CONFIG_HOME
         mkdir -p ~/.ssh
         rm ~/.ssh/known_hosts
         ssh-keyscan fcio.net >> ~/.ssh/known_hosts
@@ -36,8 +35,8 @@ jobs:
         echo "${{ secrets.CLONE_KEY }}" > ~/.ssh/id_rsa
     - name: Checkout github.com:risclog-solution/${{ inputs.repository }}.git
       run: |
-          git config --local user.email "info@risclog.de"
-          git config --local user.name "risclog"
+          git config --global user.email "info@risclog.de"
+          git config --global user.name "risclog"
           git clone --verbose git@github.com:risclog-solution/${{ inputs.repository }}.git $GITHUB_WORKSPACE
     - name: Update branch ${{ inputs.target }}
       run: |
