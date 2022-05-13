@@ -79,7 +79,7 @@ jobs:
     - name: Deploy to ${{ inputs.target }}
       run: |
         BUILD_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment started :ship:\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
+        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment started :ship:\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/B89wKpb9MpV7sFw8bt-kOM6s6v8
         ./batou deploy ${{ inputs.target }}
     - name: Report deployment failure
       if: ${{ failure() }}
