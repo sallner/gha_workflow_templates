@@ -79,10 +79,10 @@ jobs:
     - name: Deploy to ${{ inputs.target }}
       run: |
         BUILD_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment started\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
+        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment started :ship:\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
         ./batou deploy ${{ inputs.target }}
     - name: Report deployment failure
       if: ${{ failure() }}
       run: |
         BUILD_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment FAILED\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
+        curl -H 'Content-Type: application/json' -d '{"msg": "${{ inputs.target }} deployment FAILED :warning:\n'${BUILD_URL}'"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
