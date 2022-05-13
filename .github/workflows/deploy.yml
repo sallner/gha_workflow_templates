@@ -78,4 +78,5 @@ jobs:
         rm ~/.private.key
     - name: Deploy to ${{ inputs.target }}
       run: |
+        curl -H 'Content-Type: application/json' -d '{"msg": "'${{ inputs.repository }}' '${{ inputs.target }}' started"}' https://bots.keybase.io/webhookbot/vMMe-6WnHqxtw4qJgNTMdKaAAxA
         ./batou deploy ${{ inputs.target }}
