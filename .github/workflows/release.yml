@@ -6,6 +6,10 @@ on:
       package_name:
         required: true
         type: string
+    outputs:
+      version:
+          description: The version of the released package
+          value: ${{ jobs.release.outputs.version }}
     secrets:
       PYPIRC:
         required: true
@@ -13,6 +17,8 @@ on:
 jobs:
   release:
     runs-on: self-hosted
+    outputs:
+      version: ${{ steps.pin.outputs.version }}
     steps:
     - uses: actions/checkout@v3
     - name: Prepare git client
@@ -36,5 +42,4 @@ jobs:
       run: |
         VERSION=$(git tag | tail -1)
         echo "::set-output name=version::${VERSION}"
-        echo "::set-output name=package::${{ inputs.package_name }}"
         curl -H 'Content-Type: application/json' -d '{"msg": "new release: `${{ inputs.package_name }}` `'${VERSION}'`:\n\nCHANGELOG: https://github.com/risclog-solution/${{ inputs.package_name }}/blob/'${VERSION}'/CHANGES.rst"}' https://bots.keybase.io/webhookbot/FNX2NkVcZQlsJY425KDLVgFhYxc
