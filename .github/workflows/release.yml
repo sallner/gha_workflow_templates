@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  workflow_call:
+    inputs:
+      package_name:
+        required: true
+        type: string
+    secrets:
+      PYPIRC:
+        required: true
+
+jobs:
+  release:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+    - name: Prepare git client
+      run: |
+        git config --local user.email "info@risclog.de"
+        git config --local user.name "risclog"
+    - name: Set up Python 3
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.8'
+    - name: Install zest.releaser
+      run: |
+        python -m pip install --upgrade pip
+        pip install zest.releaser[recommended]
+        echo "$pypirc" > ~/.pypirc
+        fullrelease --no-input
+      env:
+        pypirc: ${{ secrets.PYPIRC }}
+    - name: Pin new version
+      id: pin
+      run: |
+        VERSION=$(git tag | tail -1)
+        echo "::set-output name=version::${VERSION}"
+        echo "::set-output name=package::${{ inputs.package_name }}"
+        curl -H 'Content-Type: application/json' -d '{"msg": "new release: `${{ inputs.package_name }}` `'${VERSION}'`:\n\nCHANGELOG: https://github.com/risclog-solution/${{ inputs.package_name }}/blob/'${VERSION}'/CHANGES.rst"}' https://bots.keybase.io/webhookbot/FNX2NkVcZQlsJY425KDLVgFhYxc
