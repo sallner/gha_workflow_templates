@@ -1,0 +1,91 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      versions:
+        default: >-
+            ["3.9",]
+        required: false
+        type: string
+      timeout_minutes:
+        default: 10
+        required: false
+        type: number
+
+env:
+  FORCE_COLOR: "1"  # Make tools pretty.
+  PYTHONUNBUFFERED: 1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+        volumes:
+          - /home/runner:/home/runner
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{fromJson(inputs.versions)}}
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup PostgreSQL environment
+      run: |
+        echo "localhost:5432:*:postgres:P0sTGrE5*Pa55W0rt!" > ~/.pgpass
+        echo "localhost:5432:*:runner:R4nneR*Pa55W0rt!" >> ~/.pgpass
+        chmod 0600 ~/.pgpass
+        createuser -h localhost -U postgres --login runner --createdb --superuser
+        psql -h localhost -U postgres -d postgres -c "ALTER ROLE \"runner\" WITH ENCRYPTED PASSWORD 'R4nneR*Pa55W0rt!' "
+        createuser -h localhost -U postgres --login claimx
+        createuser -h localhost -U postgres --login clx
+        createuser -h localhost -U postgres --login clx_readonly
+        createuser -h localhost -U postgres --login clxdmci
+        createuser -h localhost -U postgres --login mp
+        createuser -h localhost -U postgres --login brokeruser
+    - name: Install needed software
+      run: |
+        sudo apt-get update
+        sudo apt-get -yqq install wkhtmltopdf qpdf ghostscript fonts-freefont-ttf poppler-utils libpq-dev libxml2-dev libxslt-dev python-dev
+    - name: Configure ImageMagick properly
+      run: |
+          cat > policy.xml <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <policymap>
+            <policy domain="coder" rights="read|write" pattern="PDF,PS" />
+          </policymap>
+
+          EOF
+          sudo mv policy.xml /etc/ImageMagick-6/policy.xml
+    - name: Install dependencies
+      run: |
+        python${{ matrix.python-version }} -m pip install --upgrade pip
+        pip install zc.buildout
+        cd $GITHUB_WORKSPACE && buildout
+    - name: Test with pytest
+      run: cd $GITHUB_WORKSPACE && bin/py.test
+      env:
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: postgres
+    - name: Upload coverage data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-data
+        path: ".coverage*"
+        if-no-files-found: ignore
