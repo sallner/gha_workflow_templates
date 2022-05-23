@@ -12,6 +12,18 @@ on:
         default: 10
         required: false
         type: number
+      cache_hashfile:
+        default: ""
+        required: false
+        type: string
+      debug_before_buildout:
+        default: 0
+        required: false
+        type: boolean
+      debug_after_buildout:
+        default: 0
+        required: false
+        type: boolean
 
 env:
   FORCE_COLOR: "1"  # Make tools pretty.
@@ -41,7 +53,7 @@ jobs:
       matrix:
         python-version: ${{fromJson(inputs.versions)}}
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -59,6 +71,11 @@ jobs:
         createuser -h localhost -U postgres --login clxdmci
         createuser -h localhost -U postgres --login mp
         createuser -h localhost -U postgres --login brokeruser
+    - name: Add claimx directories
+      run: |
+        sudo mkdir -p /u01/app/claimx/log/
+        sudo mkdir -p /u01/app/claimx/temp/
+        sudo chmod -R 777 /u01
     - name: Install needed software
       run: |
         sudo apt-get update
@@ -73,16 +90,58 @@ jobs:
 
           EOF
           sudo mv policy.xml /etc/ImageMagick-6/policy.xml
+    - name: Cached eggs
+      uses: actions/cache@v3
+      if: ${{ inputs.cache_hashfile }}
+      with:
+        path: ~/.eggs
+        key: ${{ runner.os }}-tests-eggs-v1-${{ hashFiles(inputs.cache_hashfile) }}
+        restore-keys: |
+          ${{ runner.os }}-tests-eggs-v1-
+    - name: Cached sdists
+      uses: actions/cache@v3
+      if: ${{ inputs.cache_hashfile }}
+      with:
+        path: ~/.download-cache
+        key: ${{ runner.os }}-tests-download-cache-v1-${{ hashFiles(inputs.cache_hashfile) }}
+        restore-keys: |
+          ${{ runner.os }}-tests-download-cache-v1-
+    - name: Configure buildout for caching
+      if: ${{ inputs.cache_hashfile }}
+      run: |
+        mkdir ~/.buildout
+        cat > ~/.buildout/default.cfg <<EOF
+        [buildout]
+        eggs-directory = ~/.eggs
+        download-cache = ~/.download-cache
+        abi-tag-eggs = true
+
+        EOF
+    - name: Start tmux session if debugging before buildout is enabled
+      uses: lhotari/action-upterm@v1
+      if: ${{ inputs.debug_before_buildout }}
+      with:
+        # limit ssh access to the user who triggered the workflow
+        limit-access-to-actor: true
     - name: Install dependencies
       run: |
         python${{ matrix.python-version }} -m pip install --upgrade pip
         pip install zc.buildout
         cd $GITHUB_WORKSPACE && buildout
+    - name: Start tmux session if debugging after buildout is enabled
+      uses: lhotari/action-upterm@v1
+      if: ${{ inputs.debug_after_buildout }}
+      with:
+        # limit ssh access to the user who triggered the workflow
+        limit-access-to-actor: true
     - name: Test with pytest
-      run: cd $GITHUB_WORKSPACE && bin/py.test
+      uses: GabrielBB/xvfb-action@v1
+      with:
+          run: bin/test --setup-show
       env:
         POSTGRES_HOST: localhost
         POSTGRES_USER: postgres
+        DISPLAY: :0
     - name: Upload coverage data
       uses: actions/upload-artifact@v3
       with:
