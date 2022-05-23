@@ -3,7 +3,7 @@ name: Pre-commit
 on:
   workflow_call:
     inputs:
-      python_versions:
+      python_version:
         default: "3.8"
         required: false
         type: string
