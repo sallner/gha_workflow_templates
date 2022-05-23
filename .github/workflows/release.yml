@@ -16,7 +16,7 @@ on:
 
 jobs:
   release:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.pin.outputs.version }}
     steps:
