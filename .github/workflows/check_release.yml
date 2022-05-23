@@ -8,10 +8,10 @@ on:
           value: ${{ jobs.check.outputs.result }}
 
 jobs:
-  release:
+  check:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.check.outputs.result }}
+      result: ${{ steps.check.outputs.result }}
     steps:
     - uses: actions/checkout@v3
     - name: Check for release
