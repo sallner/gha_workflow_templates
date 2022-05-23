@@ -104,6 +104,7 @@ jobs:
       env:
         POSTGRES_HOST: localhost
         POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
         DISPLAY: :0
     - name: Upload coverage data
       uses: actions/upload-artifact@v3
