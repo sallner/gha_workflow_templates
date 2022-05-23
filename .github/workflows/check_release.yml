@@ -1,0 +1,22 @@
+name: Check if releaseable
+
+on:
+  workflow_call:
+    outputs:
+      result:
+          description: The result of the check (1 -> release, 0 -> no release)
+          value: ${{ jobs.check.outputs.result }}
+
+jobs:
+  release:
+    runs-on: self-hosted
+    outputs:
+      version: ${{ steps.check.outputs.result }}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check for release
+      id: check
+      run: |
+        CHANGELOG=$(grep "Nothing changed yet." CHANGES.rst >/dev/null; echo $?)
+        echo $CHANGELOG
+        echo "::set-output name=result::${CHANGELOG}"
