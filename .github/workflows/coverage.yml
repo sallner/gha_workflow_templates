@@ -1,0 +1,31 @@
+name: Check coverage
+
+on:
+  workflow_call:
+    inputs:
+      min_coverage:
+        required: true
+        type: integer
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+      - run: python -m pip install --upgrade coverage[toml]
+      - uses: actions/download-artifact@v3
+        with:
+          name: coverage-data
+      - name: Combine coverage and fail if it's <${{ inputs.min_coverage }}%.
+        run: |
+          python -m coverage html --skip-covered --skip-empty
+          python -m coverage report --fail-under=${{ inputs.min_coverage }}
+      - name: Upload HTML report if check failed.
+        uses: actions/upload-artifact@v3
+        with:
+          name: html-report
+          path: coverage-report
+        if: ${{ failure() }}
