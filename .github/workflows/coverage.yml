@@ -5,7 +5,7 @@ on:
     inputs:
       min_coverage:
         required: true
-        type: integer
+        type: number
 
 jobs:
   coverage:
