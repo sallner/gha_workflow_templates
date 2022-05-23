@@ -7,13 +7,20 @@ on:
         default: "3.8"
         required: false
         type: string
+    secrets:
+      GITHUB_TOKEN:
+        required: false
 
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - uses: actions/setup-python@v3
       with:
         python-version: ${{ inputs.python_version }}
     - uses: pre-commit/action@v2.0.3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
