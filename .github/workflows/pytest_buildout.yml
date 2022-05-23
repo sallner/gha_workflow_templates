@@ -17,11 +17,11 @@ on:
         required: false
         type: string
       debug_before_buildout:
-        default: 0
+        default: false
         required: false
         type: boolean
       debug_after_buildout:
-        default: 0
+        default: false
         required: false
         type: boolean
 
