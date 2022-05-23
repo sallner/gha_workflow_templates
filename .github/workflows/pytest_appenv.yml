@@ -1,0 +1,112 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      versions:
+        default: >-
+            ["3.9",]
+        required: false
+        type: string
+      timeout_minutes:
+        default: 10
+        required: false
+        type: number
+      cache_hashfile:
+        default: "**/requirements.lock"
+        required: false
+        type: string
+      test_command:
+        default: "./pytest"
+        required: false
+        type: string
+
+env:
+  FORCE_COLOR: "1"  # Make tools pretty.
+  PYTHONUNBUFFERED: 1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout_minutes }}
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+        volumes:
+          - /home/runner:/home/runner
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ${{fromJson(inputs.versions)}}
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Setup PostgreSQL environment
+      run: |
+        echo "localhost:5432:*:postgres:P0sTGrE5*Pa55W0rt!" > ~/.pgpass
+        echo "localhost:5432:*:runner:R4nneR*Pa55W0rt!" >> ~/.pgpass
+        chmod 0600 ~/.pgpass
+        createuser -h localhost -U postgres --login runner --createdb --superuser
+        psql -h localhost -U postgres -d postgres -c "ALTER ROLE \"runner\" WITH ENCRYPTED PASSWORD 'R4nneR*Pa55W0rt!' "
+        createuser -h localhost -U postgres --login claimx
+        createuser -h localhost -U postgres --login clx
+        createuser -h localhost -U postgres --login clx_readonly
+        createuser -h localhost -U postgres --login clxdmci
+        createuser -h localhost -U postgres --login mp
+        createuser -h localhost -U postgres --login brokeruser
+    - name: Add claimx directories
+      run: |
+        sudo mkdir -p /u01/app/claimx/log/
+        sudo mkdir -p /u01/app/claimx/temp/
+        sudo chmod -R 777 /u01
+    - name: Install needed software
+      run: |
+        sudo apt-get update
+        sudo apt-get -yqq install wkhtmltopdf qpdf ghostscript fonts-freefont-ttf poppler-utils libpq-dev libxml2-dev libxslt-dev python-dev
+    - name: Configure ImageMagick properly
+      run: |
+          cat > policy.xml <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <policymap>
+            <policy domain="coder" rights="read|write" pattern="PDF,PS" />
+          </policymap>
+
+          EOF
+          sudo mv policy.xml /etc/ImageMagick-6/policy.xml
+    - name: Initialize appenv cache
+      if: ${{ inputs.cache_hashfile }}
+      uses: actions/cache@v2
+      with:
+        path: .appenv
+        key: ${{ runner.os }}-appenv-${{ hashFiles(inputs.cache_hashfile) }}
+        restore-keys: |
+          ${{ runner.os }}-appenv-
+    - name: Install python packages
+      run: ./appenv prepare
+    - name: Test with pytest
+      uses: GabrielBB/xvfb-action@v1
+      with:
+          run: ${{ inputs.test_command }}
+      env:
+        POSTGRES_HOST: localhost
+        POSTGRES_USER: postgres
+        DISPLAY: :0
+    - name: Upload coverage data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-data
+        path: ".coverage*"
+        if-no-files-found: ignore
