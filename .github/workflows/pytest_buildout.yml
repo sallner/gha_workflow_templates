@@ -12,6 +12,10 @@ on:
         default: 10
         required: false
         type: number
+      test_command:
+        default: "bin/py.test"
+        required: false
+        type: string
       cache_hashfile:
         default: ""
         required: false
@@ -137,7 +141,7 @@ jobs:
     - name: Test with pytest
       uses: GabrielBB/xvfb-action@v1
       with:
-          run: bin/test --setup-show
+          run: ${{ inputs.test_command }}
       env:
         POSTGRES_HOST: localhost
         POSTGRES_USER: postgres
