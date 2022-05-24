@@ -7,9 +7,6 @@ on:
         default: "3.8"
         required: false
         type: string
-    secrets:
-      TOKEN:
-        required: false
 
 jobs:
   pre-commit:
@@ -23,4 +20,4 @@ jobs:
         python-version: ${{ inputs.python_version }}
     - uses: pre-commit/action@v2.0.3
       with:
-        token: ${{ secrets.TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
