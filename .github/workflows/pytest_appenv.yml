@@ -100,18 +100,22 @@ jobs:
     - name: Test with pytest
       uses: GabrielBB/xvfb-action@v1
       with:
-          run: ${{ inputs.test_command }} --junit-xml pytest.xml
+          run: ${{ inputs.test_command }} --junit-xml pytest.xml --cov-report xml:coverage.xml
       env:
         POSTGRES_HOST: localhost
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: P0sTGrE5*Pa55W0rt!
         DISPLAY: :0
-    - name: Upload coverage data
+    - name: Upload coverage RAW data
       uses: actions/upload-artifact@v3
       with:
         name: coverage-data
         path: ".coverage*"
-        if-no-files-found: ignore
+    - name: Upload coverage XML data
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-xml
+        path: "coverage.xml"
     - name: Upload Test Results
       if: always()
       uses: actions/upload-artifact@v3
