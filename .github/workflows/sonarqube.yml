@@ -36,7 +36,7 @@ jobs:
         host: https://sonarqube.risclog.fcio.net
         login: ${{ secrets.SONARQUBETOKEN }}
         projectType: ${{ inputs.project_type }}
-        # pullrequestKey: ${{ github.event.number }}
-        # pullrequestBranch: ${{ github.HEAD_REF }}
-        # pullrequestBase: ${{ github.BASE_REF }}
-        # pullrequestRepository: ${{ github.repository }}
+        pullrequestKey: ${{ github.event.number }}
+        pullrequestBranch: ${{ github.HEAD_REF }}
+        pullrequestBase: ${{ github.BASE_REF }}
+        pullrequestRepository: ${{ github.repository }}
