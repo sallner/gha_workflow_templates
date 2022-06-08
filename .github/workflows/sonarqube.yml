@@ -23,8 +23,20 @@ jobs:
       with:
         name: coverage-xml
     - name: SonarQube Scan
+      if: ${{ !github.event.number }}
       uses: risclog-solution/sonarqube-action@master
       with:
         host: https://sonarqube.risclog.fcio.net
         login: ${{ secrets.SONARQUBETOKEN }}
         projectType: ${{ inputs.project_type }}
+    - name: SonarQube Scan for PullRequest
+      if: ${{ github.event.number }}
+      uses: risclog-solution/sonarqube-action@master
+      with:
+        host: https://sonarqube.risclog.fcio.net
+        login: ${{ secrets.SONARQUBETOKEN }}
+        projectType: ${{ inputs.project_type }}
+        pullrequestKey: ${{ github.event.number }}
+        pullrequestBranch: ${{ github.HEAD_REF }}
+        pullrequestBase: ${{ github.BASE_REF }}
+        pullrequestRepository: ${{ github.repository }}
