@@ -1,24 +1,24 @@
 name: SonarQube
 
- on:
-   workflow_call:
-     inputs:
-       project_type:
-         default: "python"
-         required: false
-         type: string
+on:
+  workflow_call:
+    inputs:
+      project_type:
+        default: "python"
+        required: false
+        type: string
 
-     secrets:
-       SONARQUBETOKEN:
-         required: true
+    secrets:
+      SONARQUBETOKEN:
+        required: true
 
- jobs:
-   scan:
-     runs-on: ubuntu-latest
-     steps:
-     - uses: actions/checkout@v3
-       with:
-         fetch-depth: 0
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
