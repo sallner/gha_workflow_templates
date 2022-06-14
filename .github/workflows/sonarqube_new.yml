@@ -44,12 +44,12 @@ jobs:
       with:
         projectBaseDir: .
         args: >
-        -Dsonar.projectKey=$REPOSITORY_NAME
-        -Dsonar.projectName=$REPOSITORY_NAME
+        -Dsonar.projectKey=${{env.REPOSITORY_NAME}}
+        -Dsonar.projectName=${{env.REPOSITORY_NAME}}
         -Dsonar.sources=./src/
         -Dsonar.sourceEncoding=UTF-8
-        $COVERAGE_PATH
-        $EXCLUSTIONS
+        ${{env.COVERAGE_PATH}}
+        ${{env.EXCLUSTIONS}}
     - name: SonarQube Scan for PullRequests
       if: ${{ github.event.number }}
       uses: sonarsource/sonarqube-scan-action@master
@@ -59,8 +59,8 @@ jobs:
       with:
         projectBaseDir: .
         args: >
-        -Dsonar.projectKey=$REPOSITORY_NAME
-        -Dsonar.projectName=$REPOSITORY_NAME
+        -Dsonar.projectKey=${{env.REPOSITORY_NAME}}
+        -Dsonar.projectName=${{env.REPOSITORY_NAME}}
         -Dsonar.sources=./src/
         -Dsonar.sourceEncoding=UTF-8
         -Dsonar.pullrequest.key=${{ github.event.number }}
@@ -68,6 +68,6 @@ jobs:
         -Dsonar.pullrequest.base=${{ github.BASE_REF }}
         -Dsonar.pullrequest.github.repository=${{ github.repository }}
         -Dsonar.scm.provider=git
-        $COVERAGE_PATH
-        $EXCLUSTIONS
+        ${{env.COVERAGE_PATH}}
+        ${{env.EXCLUSTIONS}}
 
