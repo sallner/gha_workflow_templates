@@ -44,9 +44,9 @@ jobs:
       with:
         projectBaseDir: .
         args: >
+          -Dsonar.sources=./src/
           -Dsonar.projectKey=${{env.REPOSITORY_NAME}}
           -Dsonar.projectName=${{env.REPOSITORY_NAME}}
-          -Dsonar.sources=./src/
           -Dsonar.sourceEncoding=UTF-8
           ${{env.COVERAGE_PATH}}
           ${{env.EXCLUSTIONS}}
