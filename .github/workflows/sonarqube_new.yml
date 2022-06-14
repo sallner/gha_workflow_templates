@@ -24,7 +24,7 @@ jobs:
       with:
         name: coverage-xml
     - name: Prepare repository url
-      run: echo ::set-env name=REPOSITORY_NAME::$(echo "$GITHUB_REPOSITORY" | awk -F / '{print $2}')
+      run: "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}"
     - name: Prepare environment for python
       if: ${{ inputs.project_type == 'python'}}
       run: |
@@ -44,12 +44,12 @@ jobs:
       with:
         projectBaseDir: .
         args: >
-          -Dsonar.sources=./src/
-          ${{env.COVERAGE_PATH}}
-          ${{env.EXCLUSTIONS}}
           -Dsonar.projectKey=${{env.REPOSITORY_NAME}}
           -Dsonar.projectName=${{env.REPOSITORY_NAME}}
+          -Dsonar.sources=./src/
           -Dsonar.sourceEncoding=UTF-8
+          ${{env.COVERAGE_PATH}}
+          ${{env.EXCLUSTIONS}}
     - name: SonarQube Scan for PullRequests
       if: ${{ github.event.number }}
       uses: sonarsource/sonarqube-scan-action@master
@@ -70,4 +70,10 @@ jobs:
           -Dsonar.scm.provider=git
           ${{env.COVERAGE_PATH}}
           ${{env.EXCLUSTIONS}}
+    - name: SonarQube Quality Gate check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time
+      timeout-minutes: 5
+      env:
+        SONAR_TOKEN: ${{ secrets.SONARQUBETOKEN }}
 
