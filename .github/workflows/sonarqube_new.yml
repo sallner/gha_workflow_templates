@@ -24,7 +24,7 @@ jobs:
       with:
         name: coverage-xml
     - name: Prepare repository url
-      run: "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}"
+      run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
     - name: Prepare environment for python
       if: ${{ inputs.project_type == 'python'}}
       run: |
