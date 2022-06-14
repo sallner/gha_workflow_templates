@@ -45,11 +45,11 @@ jobs:
         projectBaseDir: .
         args: >
           -Dsonar.sources=./src/
+          ${{env.COVERAGE_PATH}}
+          ${{env.EXCLUSTIONS}}
           -Dsonar.projectKey=${{env.REPOSITORY_NAME}}
           -Dsonar.projectName=${{env.REPOSITORY_NAME}}
           -Dsonar.sourceEncoding=UTF-8
-          ${{env.COVERAGE_PATH}}
-          ${{env.EXCLUSTIONS}}
     - name: SonarQube Scan for PullRequests
       if: ${{ github.event.number }}
       uses: sonarsource/sonarqube-scan-action@master
