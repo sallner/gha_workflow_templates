@@ -1,24 +1,4 @@
-name: SonarQube
-
-on:
-  workflow_call:
-    inputs:
-      project_type:
-        default: "python"
-        required: false
-        type: string
-
-    secrets:
-      SONARQUBETOKEN:
-        required: true
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
+ fetch-depth: 0
     - name: Download Artifacts
       uses: actions/download-artifact@v3
       with:
@@ -49,7 +29,7 @@ jobs:
           -Dsonar.sources=./src/
           -Dsonar.sourceEncoding=UTF-8
           ${{env.COVERAGE_PATH}}
-          ${{env.EXCLUSTIONS}}
+          ${{env.EXCLUSIONS}}
     - name: SonarQube Scan for PullRequests
       if: ${{ github.event.number }}
       uses: sonarsource/sonarqube-scan-action@master
@@ -69,7 +49,7 @@ jobs:
           -Dsonar.pullrequest.github.repository=${{ github.repository }}
           -Dsonar.scm.provider=git
           ${{env.COVERAGE_PATH}}
-          ${{env.EXCLUSTIONS}}
+          ${{env.EXCLUSIONS}}
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
       # Force to fail step after specific time
